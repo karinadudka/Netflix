@@ -51,7 +51,7 @@ class APICaller {
                 return
             }
             do {
-                let results = try JSONDecoder().decode(TrendingTvsResponse.self, from: data )
+                let results = try JSONDecoder().decode(TrendingTvsResponse.self, from: data  )
                 print(results)
             } catch {
                 print(error)
@@ -61,4 +61,36 @@ class APICaller {
         task.resume()
         
     }
+    
+    func getUpcomingMovies(complition: @escaping ((Result<[Movie], Error>) -> Void)){
+        guard let url = URL(string: "\(Constant.baseURL)/3/movie/upcoming?api_key=\(Constant.APIKey)&language=en-US&page=1") else {return}
+        let task =  URLSession.shared.dataTask(with: URLRequest(url: url)) { data, _, error in
+            guard let data = data, error == nil else {
+                return
+            }
+            do {
+                let results = try JSONDecoder().decode(TrendingMovieResponse.self, from: data)
+                print(results)
+            } catch {
+                print(error)
+            }
+    }
+        task.resume()
+}
+
+    func getPopularMovies(complition: @escaping ((Result<[Movie], Error>) -> Void)){
+        guard let url = URL(string: "\(Constant.baseURL)/3/movie/popular/upcoming?api_key=\(Constant.APIKey)&language=en-US&page=1") else {return}
+        let task =  URLSession.shared.dataTask(with: URLRequest(url: url)) { data, _, error in
+            guard let data = data, error == nil else {
+                return
+            }
+            do {
+                let results = try JSONDecoder().decode(TrendingMovieResponse.self, from: data)
+                print(results)
+            } catch {
+                print(error)
+            }
+    }
+        task.resume()
+   }
 }

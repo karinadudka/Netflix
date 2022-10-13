@@ -59,11 +59,14 @@ class HomeViewController: UIViewController {
 //                print(error)
 //            }
 //        }
-        APICaller.shared.trendingTvs { results in
+//        APICaller.shared.trendingTvs { results in
+        APICaller.shared.getPopularMovies { _ in 
             
         }
     }
-}
+       
+    }
+
 
 extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     
