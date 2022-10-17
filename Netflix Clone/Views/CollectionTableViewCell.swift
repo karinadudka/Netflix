@@ -9,6 +9,7 @@ import UIKit
 
 class CollectionTableViewCell: UITableViewCell {
 
+    private var title: [Title] = [Title]()
 
     static let identifier = "CollectionTableViewCell"
     
@@ -17,7 +18,7 @@ class CollectionTableViewCell: UITableViewCell {
         layout.scrollDirection = .horizontal
         layout.itemSize = CGSize(width: 140, height: 200)
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "cell")
+        collectionView.register(TitleCollectionViewCell.self, forCellWithReuseIdentifier: TitleCollectionViewCell.identifire )
         return collectionView
     }()
     
@@ -38,18 +39,30 @@ class CollectionTableViewCell: UITableViewCell {
         super.layoutSubviews()
         collectionView.frame = contentView.bounds
     }
+    
+    public func configure(with titles: [Title]) {
+        self.title = titles
+        DispatchQueue.main.async { [weak self] in
+            self?.collectionView.reloadData() 
+        }
+    }
 }
 
 extension CollectionTableViewCell: UICollectionViewDelegate, UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath)
-        cell.backgroundColor = .green
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TitleCollectionViewCell.identifire, for: indexPath) as? TitleCollectionViewCell else {
+            return UICollectionViewCell()
+        }
+        guard let model = title[indexPath.row].posterPath else {
+            return UICollectionViewCell()
+        }
+        cell.configigure(with: model)
         return cell
         
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 10
+        return title.count
     }
 }

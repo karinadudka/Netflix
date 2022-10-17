@@ -7,6 +7,15 @@
 
 import UIKit
 
+enum Section: Int {
+    case TrendingMovies = 0
+    case TrendingTv = 1
+    case Popular = 2
+    case UpcomingMovies = 3
+    case TopRated = 4
+    
+}
+
 class HomeViewController: UIViewController {
     
     let sectionTitles: [String] = ["Trending Movies", "Trending TV", "Popular",  "Upcoming Movies", "Top rated"]
@@ -28,7 +37,7 @@ class HomeViewController: UIViewController {
         configureNavBar()
         let headerView = HeroHeaderUIView(frame: CGRect(x: 0, y: 0, width: view.bounds.width, height: 500))
         homeFeedTable.tableHeaderView = headerView
-        fetchData()
+        
     }
     
     private func configureNavBar() {
@@ -49,42 +58,80 @@ class HomeViewController: UIViewController {
         super.viewDidLayoutSubviews()
         homeFeedTable.frame = view.bounds
     }
-    
-    private func fetchData() {
-//        APICaller.shared.getTrendingMovies { results in
-//            switch results {
-//            case .success(let movies):
-//                print(movies)
-//            case .failure(let error):
-//                print(error)
-//            }
-//        }
-//        APICaller.shared.trendingTvs { results in
-        APICaller.shared.getPopularMovies { _ in 
-            
-        }
-    }
        
     }
 
 
 extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 1
+    }
+    
+    
     func numberOfSections(in tableView: UITableView) -> Int {
         return sectionTitles.count
     }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
        
         guard let cell = tableView.dequeueReusableCell(withIdentifier: CollectionTableViewCell.identifier, for: indexPath) as? CollectionTableViewCell else {
             return UITableViewCell()
         }
-        
+    
+        switch indexPath.section {
+        case Section.TrendingMovies.rawValue:
+            APICaller.shared.getTrendingMovies { result in
+                switch result {
+            case .success(let title):
+                cell.configure(with: title)
+            case .failure(let error):
+                print(error)
+            }
+        }
+        case Section.TrendingTv.rawValue:
+        APICaller.shared.trendingTvs { result in
+            switch result {
+        case .success(let title):
+            cell.configure(with: title)
+        case .failure(let error):
+            print(error)
+        }
+    }
+        case Section.Popular.rawValue:
+        APICaller.shared.getPopularMovies { result in
+            switch result {
+        case .success(let title):
+            cell.configure(with: title)
+        case .failure(let error):
+            print(error)
+        }
+    }
+        case Section.UpcomingMovies.rawValue:
+        APICaller.shared.getUpcomingMovies { result in
+            switch result {
+        case .success(let title):
+            cell.configure(with: title)
+        case .failure(let error):
+            print(error)
+        }
+    }
+        case Section.TopRated.rawValue:
+        APICaller.shared.getTopRatedMovies { result in
+            switch result {
+        case .success(let title):
+            cell.configure(with: title)
+        case .failure(let error):
+            print(error)
+        }
+    }
+
+        default:
+           return UITableViewCell()
+        }
         return cell
     }
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
-    }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 200
@@ -112,4 +159,5 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
 
         navigationController?.navigationBar.transform = .init(translationX: 0, y: min(0, -offset))
     }
-}
+  }
+
